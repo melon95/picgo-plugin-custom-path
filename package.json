@@ -1,24 +1,22 @@
 {
   "name": "picgo-plugin-custom-path",
-  "version": "1.0.4",
+  "version": "1.0.0",
   "description": "A PicGo plugin for customizing file name",
   "main": "dist/index.js",
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://github.com/liuwave/picgo-plugin-super-prefix#readme",
+  "homepage": "https://github.com/melon95/picgo-plugin-custom-path",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p .",
-    "dev": "tsc -w -p .",
-    "patch": "npm version patch && git push origin master && git push origin --tags",
-    "minor": "npm version minor && git push origin master && git push origin --tags",
-    "major": "npm version major && git push origin master && git push origin --tags"
+    "dev": "tsc -w -p ."
   },
   "keywords": [
     "picgo",
     "picgo-gui-plugin",
-    "picgo-plugin"
+    "picgo-plugin",
+    "picgo filename",
+    "picgo custom"
   ],
   "author": "melon95",
   "license": "MIT",
