@@ -1,8 +1,9 @@
 node_modules/
 .DS_Store
 yarn-error.log
-temp.js
-package-lock.json
-/.idea
-/tests
-/yarn.lock
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
