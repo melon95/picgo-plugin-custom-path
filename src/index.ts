@@ -1,8 +1,5 @@
 const crypto = require('crypto')
 
-function sleep (time) {
-  return new Promise((resolve) => setTimeout(resolve, time))
-}
 const guiMenu = ctx => {
   return [
     {
@@ -30,15 +27,11 @@ export = (ctx: any) => {
     ctx.helper.beforeUploadPlugins.register('custom-path', {
       handle: async function (ctx) {
         const autoRename = ctx.getConfig('settings.autoRename')
-        if (autoRename) {
-          ctx.emit('notification', {
-            title: '❌ 警告',
-            body: '请关闭 PicGo 的 【时间戳重命名】 功能,\ncustom-path 插件重命名方式会被覆盖'
-          })
-          await sleep(10000)
-          throw new Error('custom-path conflict')
-        }
         const format: string = ctx.getConfig('picgo-plugin-custom-path.format') || ''
+        // 冲突时，关闭autoRename
+        if (autoRename && format) {
+          ctx.saveConfig('settings.autoRename', false)
+        }
         ctx.output.forEach((item, i) => {
           let fileName = item.fileName
           if (format) {
