@@ -2,10 +2,7 @@
 
 name: Node.js Package
 
-on:
-  release:
-    types: [published]
-
+on: release
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
