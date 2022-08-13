@@ -7,6 +7,10 @@
     "access": "public"
   },
   "homepage": "https://github.com/melon95/picgo-plugin-custom-path",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/melon95/picgo-plugin-custom-path.git"
+  },
   "scripts": {
     "build": "tsc -p .",
     "dev": "tsc -w -p .",
