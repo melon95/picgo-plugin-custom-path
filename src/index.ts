@@ -9,7 +9,7 @@ const guiMenu = (ctx: picgo) => {
         const path = ctx.getConfig('picgo-plugin-custom-path.path')
         const value = await guiApi.showInputBox({
           title: '打开对话框',
-          placeholder: '默认值：images/{y}/{m}/{d}/{origin}-{hash}',
+          placeholder: '默认值：images/{year}/{month}/{day}/{origin}-{hash}',
           value: path
         })
         ctx.saveConfig({
@@ -29,7 +29,7 @@ export = (ctx: picgo) => {
         const autoRename = ctx.getConfig('settings.autoRename')
         const path: string =
           (ctx.getConfig('picgo-plugin-custom-path.path') as string)?.trim() ||
-          ''
+          'images/{year}/{month}/{day}/{origin}-{hash}'
         // 冲突时，关闭autoRename
         if (autoRename && path) {
           ctx.saveConfig({
@@ -41,33 +41,37 @@ export = (ctx: picgo) => {
         if (path) {
           const currentTime = new Date()
           const formatObject = {
-            y: currentTime.getFullYear(),
-            m: currentTime.getMonth() + 1,
-            d: currentTime.getDate(),
-            h: currentTime.getHours(),
-            i: currentTime.getMinutes(),
-            s: currentTime.getSeconds(),
+            year: currentTime.getFullYear(),
+            month: currentTime.getMonth() + 1,
+            day: currentTime.getDate(),
+            hour: currentTime.getHours(),
+            minute: currentTime.getMinutes(),
+            second: currentTime.getSeconds(),
             timestamp: currentTime.getTime().toString()
           }
           ctx.output.forEach((item, i) => {
             let fileName = path
               // 替换日期
-              .replace(/{(y|m|d|h|i|s|timestamp)}/gi, (result, key) => {
-                return (
-                  (typeof formatObject[key] === 'number' &&
-                  formatObject[key] < 10
-                    ? '0'
-                    : '') + formatObject[key]
-                )
-              })
+              .replace(
+                /{(year|month|day|hour|minute|second|timestamp)}/gi,
+                (result, key) => {
+                  return (
+                    (typeof formatObject[key] === 'number' &&
+                    formatObject[key] < 10
+                      ? '0'
+                      : '') + formatObject[key]
+                  )
+                }
+              )
               // 字符串替换
               .replace(/{(hash|origin|\w+)}/gi, (result, key) => {
                 // 文件原名
                 if (key === 'origin') {
-                  return fileName
+                  return item.fileName
                     .substring(
                       0,
-                      Math.max(0, fileName.lastIndexOf('.')) || fileName.length
+                      Math.max(0, item.fileName.lastIndexOf('.')) ||
+                        item.fileName.length
                     )
                     .replace(/[\\/:<>|"'*?$#&@()[\]^~]+/g, '-')
                 }
