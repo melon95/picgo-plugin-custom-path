@@ -5,7 +5,7 @@ const guiMenu = ctx => {
   return [
     {
       label: '配置',
-      async handle(ctx, guiApi) {
+      async handle (ctx, guiApi) {
         const path = ctx.getConfig('picgo-plugin-custom-path.path')
         const value = await guiApi.showInputBox({
           title: '打开对话框',
@@ -22,16 +22,19 @@ const guiMenu = ctx => {
   ]
 }
 
-
 export = (ctx: picgo) => {
   const register = () => {
     ctx.helper.beforeUploadPlugins.register('custom-path', {
       handle: async function (ctx) {
         const autoRename = ctx.getConfig('settings.autoRename')
-        const path: string = (ctx.getConfig('picgo-plugin-custom-path.path')?.trim() || '')
+        const path: string = ((ctx.getConfig('picgo-plugin-custom-path.path') as string)?.trim() || '')
         // 冲突时，关闭autoRename
         if (autoRename && path) {
-          ctx.saveConfig('settings.autoRename', false)
+          ctx.saveConfig({
+            settings: {
+              autoRename: false
+            }
+          })
         }
         if (path) {
           const currentTime = new Date()
@@ -51,13 +54,13 @@ export = (ctx: picgo) => {
                 return (typeof formatObject[key] === 'number' && formatObject[key] < 10 ? '0' : '') + formatObject[key]
               })
               // 字符串替换
-              .replace(/{(hash|origin|\w+)}/gi,(result, key) => {
-                  // 文件原名
+              .replace(/{(hash|origin|\w+)}/gi, (result, key) => {
+                // 文件原名
                 if (key === 'origin') {
                   return fileName.substring(0, Math.max(0, fileName.lastIndexOf('.')) || fileName.length)
-                      .replace(/[\\\/:<>|"'*?$#&@()\[\]^~]+/g, '-')
+                    .replace(/[\\\/:<>|"'*?$#&@()\[\]^~]+/g, '-')
                 }
-                  // 文件hash值
+                // 文件hash值
                 if (key === 'hash') {
                   const hash = crypto.createHash('md5')
                   hash.update(item.buffer)
@@ -67,7 +70,7 @@ export = (ctx: picgo) => {
               })
 
             // 去除多余的"/"
-              .replace(/[\/]+/g,'/')
+              .replace(/[\/]+/g, '/')
 
             if (fileName.slice(-1) === '/') {
               fileName += i
@@ -78,11 +81,11 @@ export = (ctx: picgo) => {
           })
         }
         return ctx
-      },
+      }
     })
   }
   return {
     register,
-    guiMenu,
+    guiMenu
   }
 }
