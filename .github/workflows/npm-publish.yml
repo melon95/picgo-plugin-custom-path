@@ -4,7 +4,8 @@ name: Publich Npm Package
 
 on:
   release:
-    types: [published, released, created]
+    types:
+      - created
 
 jobs:
   publish-npm:
