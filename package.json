@@ -48,5 +48,6 @@
       "prettier --write",
       "git add"
     ]
-  }
+  },
+  "packageManager": "pnpm@7.9.0"
 }
