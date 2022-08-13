@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  create-release:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -38,15 +38,3 @@ jobs:
           body: ${{steps.description.outputs.content}}
           draft: false
           prerelease: false
-
-  publish-npm:
-    runs-on: ubuntu-latest
-    steps:
-      - run: npm install -g pnpm
-
-      - run: pnpm install
-      - run: pnpm build
-
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
