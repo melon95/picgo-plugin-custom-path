@@ -9,7 +9,8 @@
   "homepage": "https://github.com/melon95/picgo-plugin-custom-path",
   "scripts": {
     "build": "tsc -p .",
-    "dev": "tsc -w -p ."
+    "dev": "tsc -w -p .",
+    "prepare": "husky install"
   },
   "keywords": [
     "picgo",
@@ -21,17 +22,27 @@
   "author": "melon95",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^10.10.1",
-    "eslint": "^5.0.1",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.13.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-standard": "^3.1.0",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard": "latest",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.0.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
     "picgo": "^1.2.0",
-    "tslint": "^5.10.0",
-    "tslint-config-standard": "^7.1.0",
-    "typescript": "^3.0.3"
+    "prettier": "^2.7.1",
+    "prettier-config-standard": "^5.0.0",
+    "typescript": "^4.7.4"
   },
-  "packageManager": "yarn@3.2.2"
+  "lint-staged": {
+    "src/**/*.ts?(x)": [
+      "eslint",
+      "prettier --write",
+      "git add"
+    ]
+  }
 }

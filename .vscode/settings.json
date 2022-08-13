@@ -1,0 +1,16 @@
+{
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "prettier.jsxBracketSameLine": true,
+  "prettier.requireConfig": true,
+  "prettier.jsxSingleQuote": true,
+  "editor.formatOnPaste": false,
+  "prettier.singleQuote": true,
+  "prettier.withNodeModules": true,
+  "prettier.resolveGlobalModules": false,
+  "prettier.requirePragma": false,
+  "prettier.useEditorConfig": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
+}

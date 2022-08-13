@@ -1,40 +1,19 @@
 "use strict";
-const picgo = require('picgo');
-const path = require('path');
 const crypto = require('crypto');
-function sleep(time) {
-    return new Promise((resolve) => setTimeout(resolve, time));
-}
-const pluginConfig = ctx => {
-    let userConfig = ctx.getConfig('picgo-plugin-custom-path');
-    if (!userConfig) {
-        userConfig = {};
-    }
-    return [
-        {
-            name: 'format',
-            type: 'input',
-            alias: '文件(路径)格式',
-            default: userConfig.format || '',
-            message: '默认值：images/{y}/{m}/{d}/{origin}-{hash}',
-            required: true
-        }
-    ];
-};
 const guiMenu = ctx => {
     return [
         {
             label: '配置',
             async handle(ctx, guiApi) {
-                const format = ctx.getConfig('picgo-plugin-custom-path.format');
+                const path = ctx.getConfig('picgo-plugin-custom-path.path');
                 const value = await guiApi.showInputBox({
                     title: '打开对话框',
                     placeholder: '默认值：images/{y}/{m}/{d}/{origin}-{hash}',
-                    value: format
+                    value: path
                 });
                 ctx.saveConfig({
                     'picgo-plugin-custom-path': {
-                        format: value
+                        path: value
                     }
                 });
             }
@@ -45,34 +24,28 @@ module.exports = (ctx) => {
     const register = () => {
         ctx.helper.beforeUploadPlugins.register('custom-path', {
             handle: async function (ctx) {
+                var _a;
                 const autoRename = ctx.getConfig('settings.autoRename');
-                if (autoRename) {
-                    ctx.emit('notification', {
-                        title: '❌ 警告',
-                        body: '请关闭 PicGo 的 【时间戳重命名】 功能,\ncustom-path 插件重命名方式会被覆盖'
-                    });
-                    await sleep(10000);
-                    throw new Error('custom-path conflict');
+                const path = (((_a = ctx.getConfig('picgo-plugin-custom-path.path')) === null || _a === void 0 ? void 0 : _a.trim()) || '');
+                // 冲突时，关闭autoRename
+                if (autoRename && path) {
+                    ctx.saveConfig('settings.autoRename', false);
                 }
-                const format = ctx.getConfig('picgo-plugin-custom-path.format') || '';
-                ctx.output.forEach((item, i) => {
-                    let fileName = item.fileName;
-                    if (format) {
-                        let currentTime = new Date();
-                        let formatObject = {
-                            y: currentTime.getFullYear(),
-                            m: currentTime.getMonth() + 1,
-                            d: currentTime.getDate(),
-                            h: currentTime.getHours(),
-                            i: currentTime.getMinutes(),
-                            s: currentTime.getSeconds(),
-                            ms: currentTime.getTime().toString().slice(-3),
-                            timestamp: currentTime.getTime().toString().slice(0, -3)
-                        };
-                        // 去除空格
-                        fileName = format.trim()
+                if (path) {
+                    const currentTime = new Date();
+                    const formatObject = {
+                        y: currentTime.getFullYear(),
+                        m: currentTime.getMonth() + 1,
+                        d: currentTime.getDate(),
+                        h: currentTime.getHours(),
+                        i: currentTime.getMinutes(),
+                        s: currentTime.getSeconds(),
+                        timestamp: currentTime.getTime().toString()
+                    };
+                    ctx.output.forEach((item, i) => {
+                        let fileName = path
                             // 替换日期
-                            .replace(/{(y|m|d|h|i|s|ms|timestamp)}/gi, (result, key) => {
+                            .replace(/{(y|m|d|h|i|s|timestamp)}/gi, (result, key) => {
                             return (typeof formatObject[key] === 'number' && formatObject[key] < 10 ? '0' : '') + formatObject[key];
                         })
                             // 字符串替换
@@ -96,9 +69,9 @@ module.exports = (ctx) => {
                             fileName += i;
                         }
                         fileName += item.extname;
-                    }
-                    item.fileName = fileName;
-                });
+                        item.fileName = fileName;
+                    });
+                }
                 return ctx;
             },
         });

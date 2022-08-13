@@ -1,4 +1,5 @@
-declare const _default: (ctx: any) => {
+import picgo from 'picgo';
+declare const _default: (ctx: picgo) => {
     register: () => void;
     guiMenu: (ctx: any) => {
         label: string;
