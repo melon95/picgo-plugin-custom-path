@@ -6,16 +6,10 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": false,
-    "target": "es2017",
+    "target": "ESNext",
     "declaration": true,
     "outDir": "dist",
-    "lib": [
-      "es2017",
-      "es2015",
-      "es6"
-    ]
+    "lib": ["es2017", "es2015", "es6"]
   },
-  "include": [
-    "./src/**/*"
-  ]
+  "include": ["./src/**/*"]
 }
