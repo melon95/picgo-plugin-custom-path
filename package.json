@@ -1,6 +1,6 @@
 {
   "name": "picgo-plugin-custom-path",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A PicGo plugin for customizing upload path",
   "main": "dist/index.js",
   "publishConfig": {
