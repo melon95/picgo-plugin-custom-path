@@ -1,6 +1,6 @@
 "use strict";
 const crypto = require('crypto');
-const guiMenu = ctx => {
+const guiMenu = (ctx) => {
     return [
         {
             label: '配置',
@@ -20,16 +20,22 @@ const guiMenu = ctx => {
         }
     ];
 };
+n;
 module.exports = (ctx) => {
     const register = () => {
         ctx.helper.beforeUploadPlugins.register('custom-path', {
             handle: async function (ctx) {
                 var _a;
                 const autoRename = ctx.getConfig('settings.autoRename');
-                const path = (((_a = ctx.getConfig('picgo-plugin-custom-path.path')) === null || _a === void 0 ? void 0 : _a.trim()) || '');
+                const path = ((_a = ctx.getConfig('picgo-plugin-custom-path.path')) === null || _a === void 0 ? void 0 : _a.trim()) ||
+                    '';
                 // 冲突时，关闭autoRename
                 if (autoRename && path) {
-                    ctx.saveConfig('settings.autoRename', false);
+                    ctx.saveConfig({
+                        settings: {
+                            autoRename: false
+                        }
+                    });
                 }
                 if (path) {
                     const currentTime = new Date();
@@ -46,14 +52,18 @@ module.exports = (ctx) => {
                         let fileName = path
                             // 替换日期
                             .replace(/{(y|m|d|h|i|s|timestamp)}/gi, (result, key) => {
-                            return (typeof formatObject[key] === 'number' && formatObject[key] < 10 ? '0' : '') + formatObject[key];
+                            return ((typeof formatObject[key] === 'number' &&
+                                formatObject[key] < 10
+                                ? '0'
+                                : '') + formatObject[key]);
                         })
                             // 字符串替换
                             .replace(/{(hash|origin|\w+)}/gi, (result, key) => {
                             // 文件原名
                             if (key === 'origin') {
-                                return fileName.substring(0, Math.max(0, fileName.lastIndexOf('.')) || fileName.length)
-                                    .replace(/[\\\/:<>|"'*?$#&@()\[\]^~]+/g, '-');
+                                return fileName
+                                    .substring(0, Math.max(0, fileName.lastIndexOf('.')) || fileName.length)
+                                    .replace(/[\\/:<>|"'*?$#&@()[\]^~]+/g, '-');
                             }
                             // 文件hash值
                             if (key === 'hash') {
@@ -64,7 +74,7 @@ module.exports = (ctx) => {
                             return key;
                         })
                             // 去除多余的"/"
-                            .replace(/[\/]+/g, '/');
+                            .replace(/[/]+/g, '/');
                         if (fileName.slice(-1) === '/') {
                             fileName += i;
                         }
@@ -73,11 +83,11 @@ module.exports = (ctx) => {
                     });
                 }
                 return ctx;
-            },
+            }
         });
     };
     return {
         register,
-        guiMenu,
+        guiMenu
     };
 };
