@@ -1,7 +1,10 @@
-name: Create Release
+name: Release && Publish
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
@@ -14,20 +17,20 @@ jobs:
         with:
           node-version: 16.x
 
-      - name: 读取当前版本号
+      - name: Get Version
         id: version
         uses: ashley-taylor/read-json-property-action@v1.0
         with:
           path: ./package.json
           property: version
 
-      - name: 读取描述文件
+      - name: Get Changelog
         id: description
         uses: juliangruber/read-file-action@v1
         with:
           path: ./CHANGELOG
 
-      - name: 创建GitHub Release
+      - name: Create Release
         id: create_release
         uses: actions/create-release@latest
         env:
@@ -38,3 +41,25 @@ jobs:
           body: ${{steps.description.outputs.content}}
           draft: false
           prerelease: false
+
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Build project
+      - run: pnpm install
+      - run: pnpm build
+
+      - name: Publish package
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
