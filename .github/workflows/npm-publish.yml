@@ -1,8 +1,11 @@
 # This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
 
-name: Node.js Package
+name: Publich Npm Package
 
-on: release
+on:
+  release:
+    types: [published, released, created]
+
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
