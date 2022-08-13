@@ -1,3 +1,4 @@
+import picgo from 'picgo'
 const crypto = require('crypto')
 
 const guiMenu = ctx => {
@@ -5,15 +6,15 @@ const guiMenu = ctx => {
     {
       label: '配置',
       async handle(ctx, guiApi) {
-        const format = ctx.getConfig('picgo-plugin-custom-path.format')
+        const path = ctx.getConfig('picgo-plugin-custom-path.path')
         const value = await guiApi.showInputBox({
           title: '打开对话框',
           placeholder: '默认值：images/{y}/{m}/{d}/{origin}-{hash}',
-          value: format
+          value: path
         })
         ctx.saveConfig({
           'picgo-plugin-custom-path': {
-            format: value
+            path: value
           }
         })
       }
@@ -22,34 +23,31 @@ const guiMenu = ctx => {
 }
 
 
-export = (ctx: any) => {
+export = (ctx: picgo) => {
   const register = () => {
     ctx.helper.beforeUploadPlugins.register('custom-path', {
       handle: async function (ctx) {
         const autoRename = ctx.getConfig('settings.autoRename')
-        const format: string = ctx.getConfig('picgo-plugin-custom-path.format') || ''
+        const path: string = (ctx.getConfig('picgo-plugin-custom-path.path')?.trim() || '')
         // 冲突时，关闭autoRename
-        if (autoRename && format) {
+        if (autoRename && path) {
           ctx.saveConfig('settings.autoRename', false)
         }
-        ctx.output.forEach((item, i) => {
-          let fileName = item.fileName
-          if (format) {
-            let currentTime = new Date()
-            let formatObject = {
-              y: currentTime.getFullYear(),
-              m: currentTime.getMonth() + 1,
-              d: currentTime.getDate(),
-              h: currentTime.getHours(),
-              i: currentTime.getMinutes(),
-              s: currentTime.getSeconds(),
-              ms : currentTime.getTime().toString().slice(-3),
-              timestamp: currentTime.getTime().toString().slice(0,-3)
-            }
-            // 去除空格
-            fileName = format.trim()
+        if (path) {
+          const currentTime = new Date()
+          const formatObject = {
+            y: currentTime.getFullYear(),
+            m: currentTime.getMonth() + 1,
+            d: currentTime.getDate(),
+            h: currentTime.getHours(),
+            i: currentTime.getMinutes(),
+            s: currentTime.getSeconds(),
+            timestamp: currentTime.getTime().toString()
+          }
+          ctx.output.forEach((item, i) => {
+            let fileName = path
               // 替换日期
-              .replace(/{(y|m|d|h|i|s|ms|timestamp)}/gi, (result, key) => {
+              .replace(/{(y|m|d|h|i|s|timestamp)}/gi, (result, key) => {
                 return (typeof formatObject[key] === 'number' && formatObject[key] < 10 ? '0' : '') + formatObject[key]
               })
               // 字符串替换
@@ -76,9 +74,9 @@ export = (ctx: any) => {
             }
 
             fileName += item.extname
-          }
-          item.fileName = fileName
-        })
+            item.fileName = fileName
+          })
+        }
         return ctx
       },
     })
