@@ -1,7 +1,7 @@
 {
   "name": "picgo-plugin-custom-path",
   "version": "1.0.1",
-  "description": "A PicGo plugin for customizing file name",
+  "description": "A PicGo plugin for customizing upload path",
   "main": "dist/index.js",
   "publishConfig": {
     "access": "public"
